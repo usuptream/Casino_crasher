@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CASINO CRASHER - VERSION 1.0</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+  body {
+    background: url('https://files.catbox.moe/n0py7g.png') center/cover no-repeat;
+    min-height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    padding: 20px; color: #fff;
+  }
+  .card {
+    background: rgba(0,0,0,0.85);
+    padding: 24px;
+    border-radius: 14px;
+    width: 400px;
+    box-shadow: 0 0 20px rgba(255,0,0,0.45);
+    border: 1px solid rgba(255,0,0,0.35);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .avatar {
+    width: 96px; height: 96px;
+    border-radius: 50%;
+    border: 3px solid red;
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px red;
+    object-fit: cover;
+  }
+  h1 {
+    font-size: 24px; font-weight: 700;
+    color: #fff; text-shadow: 0 0 8px red;
+    margin-bottom: 6px;
+  }
+  p, label {
+    font-size: 12px; color: #ccc; margin-bottom: 8px;
+  }
+  input, select, textarea, button {
+    width: 100%; padding: 10px;
+    margin: 6px 0 12px 0;
+    border: none;
+    border-radius: 6px;
+    background: #111;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    border: 1px solid rgba(255,0,0,0.25);
+    cursor: pointer;
+  }
+  textarea {
+    resize: none;
+    height: 120px;
+  }
+  button:hover:not(:disabled) {
+    background: #cc0000;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  button.danger {
+    background: #990000;
+  }
+  .link {
+    display: block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #ff7b7b;
+    cursor: pointer;
+    text-decoration: underline;
+    user-select: none;
+  }
+  #loadingOverlay {
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.75);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  .spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #ff0000;
+    border-radius: 50%;
+    width: 50px; height: 50px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  #tools-content > div {
+    display: none;
+  }
+  #tools-content > div.active {
+    display: block;
+  }
+  #menu-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  #menu-buttons button {
+    flex: 1;
+  }
+  #userInfoBtn {
+    background: transparent;
+    border: 1px solid #ff5555;
+    color: #ff9999;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    width: 100%;
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay"><div class="spinner"></div></div>
+
+<!-- Login Page -->
+<div class="card" id="login-page" role="main">
+  <img src="https://files.catbox.moe/n0py7g.png" class="avatar" alt="avatar" />
+  <h1>CASINO CRASHER</h1>
+  <h1>VERSION : 1.0</h1>
+  <p>Login</p>
+  <input type="email" id="login-email" placeholder="Email" autocomplete="username" aria-label="Email" />
+  <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" aria-label="Password" />
+  <button id="loginBtn" aria-label="Login Button">Login</button>
+  <span class="link" id="link-create-account" tabindex="0" role="button">Buat akun baru</span>
+  <p class="small" aria-live="polite" aria-atomic="true">Akun memiliki tanggal expired (jika diset) — setelah lewat, akun tidak bisa login.</p>
+</div>
+
+<!-- Tools Page -->
+<div class="card" id="tools-page" style="display:none;" role="main" aria-live="polite" aria-atomic="true">
+  <img src="https://files.catbox.moe/n0py7g.png" class="avatar" alt="avatar" />
+  <h1>CASINO CRASHER</h1>
+  <h1>VERSION : 1.0</h1>
+
+  <!-- Info User Button -->
+  <button id="userInfoBtn" aria-label="Informasi User">Info User (Klik untuk lihat detail)</button>
+
+  <p id="roleInfo"></p>
+
+  <div id="menu-buttons" role="tablist" aria-label="Main Menu">
+    <button role="tab" id="btn-bug" aria-selected="true" aria-controls="bug" tabindex="0">Bug Tools</button>
+    <button role="tab" id="btn-create" aria-selected="false" aria-controls="create">Buat Akun</button>
+  </div>
+
+  <div id="tools-content">
+    <div id="bug" class="active" role="tabpanel" tabindex="0" aria-labelledby="btn-bug">
+      <label>Nomor target:</label>
+      <input type="text" id="targetNumber" placeholder="Masukkan nomor target (62...)" />
+      <button onclick="doAction('Crash WA')">Crash WA</button>
+      <button onclick="doAction('FC Invisible')">FC Invisible</button>
+      <button onclick="doAction('Ultra Delay')">Ultra Delay</button>
+      <button onclick="doAction('Blank Message')">Blank Message</button>
+      <button onclick="doAction('Done Banned Perma')">BandPrmWa</button>
+    </div>
+
+    <div id="create" role="tabpanel" tabindex="0" aria-labelledby="btn-create" aria-hidden="true">
+      <h2 style="color:#ff5555; margin-bottom:10px;">Buat Akun Baru</h2>
+      <p id="createForInfo" style="color:#ddd; font-size:12px; margin-bottom:10px;"></p>
+      <input type="email" id="reg-email" placeholder="Email" autocomplete="off" />
+      <input type="password" id="reg-password" placeholder="Password" autocomplete="off" />
+      <label>Role akun:</label>
+      <select id="reg-role">
+        <option value="">Pilih role</option>
+        <option value="Member">Member</option>
+        <option value="VIP">VIP</option>
+        <option value="Reseller">Reseller</option>
+        <option value="Admin">Admin</option>
+        <option value="Partner">Partner</option>
+        <option value="CEO">CEO</option>
+        <option value="Owner">Owner</option>
+      </select>
+      <label>Expired (contoh: 30d untuk 30 hari, kosong = tanpa expired):</label>
+      <input type="text" id="reg-expired" placeholder="Contoh: 30d" />
+      <button id="registerBtn">Buat Akun</button>
+    </div>
+  </div>
+
+  <button class="danger" id="logoutBtn" style="margin-top:20px;">LOGOUT</button>
+</div>
+
+<!-- Firebase SDK compat -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics-compat.js"></script>
+
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBLDmxwVu7rAbgBUdlk3uUGRIwp5mjReuo",
+    authDomain: "casino-9b4bb.firebaseapp.com",
+    projectId: "casino-9b4bb",
+    storageBucket: "casino-9b4bb.firebasestorage.app",
+    messagingSenderId: "518997467583",
+    appId: "1:518997467583:web:687fad085502815adac10a",
+    measurementId: "G-PKZFLKW16F"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const analytics = firebase.analytics();
+
+  const createPermissions = {
+    'Developer': ['Member','VIP','Reseller','Admin','Partner','CEO','Owner','Developer'],
+    'Owner': ['Member','VIP','Reseller','Admin','Partner','CEO','Owner'],
+    'CEO': ['Member','VIP','Reseller','Admin','Partner','CEO'],
+    'Partner': ['Member','VIP','Reseller','Admin','Partner'],
+    'Admin': ['Member','VIP','Reseller','Admin'],
+    'Reseller': ['Member','VIP'],
+  };
+
+  const loginPage = document.getElementById('login-page');
+  const toolsPage = document.getElementById('tools-page');
+  const roleInfo = document.getElementById('roleInfo');
+  const createForInfo = document.getElementById('createForInfo');
+  const regRoleSelect = document.getElementById('reg-role');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+
+  function showLoading(){ loadingOverlay.style.display = 'flex'; }
+  function hideLoading(){ loadingOverlay.style.display = 'none'; }
+
+  function showLoginPage(){
+    loginPage.style.display = 'block';
+    toolsPage.style.display = 'none';
+  }
+  function showToolsPage(){
+    loginPage.style.display = 'none';
+    toolsPage.style.display = 'block';
+    showToolsSection('bug');
+    updateCreateForm();
+  }
+  function showToolsSection(id){
+    const sections = ['bug','create'];
+    sections.forEach(s=>{
+      const el = document.getElementById(s);
+      if(s===id){
+        el.classList.add('active');
+        el.setAttribute('aria-hidden', 'false');
+      } else {
+        el.classList.remove('active');
+        el.setAttribute('aria-hidden', 'true');
+      }
+    });
+    document.getElementById('btn-bug').setAttribute('aria-selected', id==='bug');
+    document.getElementById('btn-create').setAttribute('aria-selected', id==='create');
+  }
+
+  function parseExpired(str){
+    if(!str) return '';
+    str = str.trim().toLowerCase();
+    if(!str.match(/^\d+d$/)) return '';
+    const days = parseInt(str.replace('d',''));
+    if(isNaN(days) || days<=0) return '';
+    const now = new Date();
+    now.setHours(0,0,0,0);
+    now.setDate(now.getDate()+days);
+    return now.toISOString().split('T')[0];
+  }
+
+  // Users extra data (role, expired) simpan di localStorage
+  let usersExtra = JSON.parse(localStorage.getItem('usersExtra') || '{}');
+  function saveUsersExtra() {
+    localStorage.setItem('usersExtra', JSON.stringify(usersExtra));
+  }
+  function getUserExtra(email) {
+    return usersExtra[email] || null;
+  }
+
+  // Global current user state
+  let currentUser = null;
+  let currentUserData = null;
+
+  // Login pakai Firebase
+  async function login() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    if(!email || !password){
+      alert('Isi email dan password!');
+      return;
+    }
+    showLoading();
+    try {
+      const userCredential = await auth.signInWithEmailAndPassword(email, password);
+      currentUser = userCredential.user;
+      currentUserData = getUserExtra(currentUser.email) || {role:'Member'};
+      if(currentUserData.expired){
+        const now = new Date();
+        const expDate = new Date(currentUserData.expired);
+        if(now > expDate){
+          alert('Akun sudah expired!');
+          hideLoading();
+          return;
+        }
+      }
+      enterTools();
+    } catch(error) {
+      alert('Login gagal: ' + error.message);
+    }
+    hideLoading();
+  }
+
+  // Register pakai Firebase
+  async function registerAccount() {
+    if(!currentUser){
+      alert('Login dulu ya!');
+      return;
+    }
+    if(!(currentUserData.role in createPermissions)){
+      alert('Role Anda tidak punya izin buat akun!');
+      return;
+    }
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value.trim();
+    const role = regRoleSelect.value;
+    const expiredInput = document.getElementById('reg-expired').value.trim();
+
+    if(!email || !password || !role){
+      alert('Isi lengkap email, password dan role!');
+      return;
+    }
+
+    const canCreateRoles = createPermissions[currentUserData.role];
+    if(!canCreateRoles.includes(role)){
+      alert(`Anda tidak punya izin buat akun dengan role ${role}!`);
+      return;
+    }
+
+    showLoading();
+    try {
+      const methods = await auth.fetchSignInMethodsForEmail(email);
+      if(methods.length > 0){
+        alert('Email sudah ada!');
+        hideLoading();
+        return;
+      }
+      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const newUser = userCredential.user;
+
+      const expiredDate = parseExpired(expiredInput);
+      usersExtra[email] = {
+        role,
+        expired: expiredDate,
+        createdBy: currentUser.email,
+        createdAt: new Date().toISOString()
+      };
+      saveUsersExtra();
+
+      alert(`Akun ${email} berhasil dibuat dengan role ${role}${expiredDate ? ', expired '+expiredDate : ', tanpa expired'}.`);
+      updateCreateForm();
+      document.getElementById('reg-email').value = '';
+      document.getElementById('reg-password').value = '';
+      document.getElementById('reg-expired').value = '';
+    } catch(error){
+      alert('Gagal buat akun: '+error.message);
+    }
+    hideLoading();
+  }
+
+  function enterTools(){
+    showToolsPage();
+    roleInfo.textContent = `Role Anda: ${currentUserData.role} — (login: ${currentUser.email})`;
+  }
+
+  function logout(){
+    auth.signOut();
+    currentUser = null;
+    currentUserData = null;
+    showLoginPage();
+  }
+
+  // Update form create account sesuai role
+  function updateCreateForm(){
+    if(!currentUserData || !(currentUserData.role in createPermissions)){
+      createForInfo.textContent = 'Role Anda tidak memiliki izin membuat akun.';
+      regRoleSelect.value = '';
+      for(let opt of regRoleSelect.options){
+        if(opt.value !== '') opt.disabled = true;
+      }
+      return;
+    }
+    const canCreateRoles = createPermissions[currentUserData.role];
+    createForInfo.textContent = `Anda login sebagai ${currentUserData.role}. Anda bisa membuat akun dengan role: ${canCreateRoles.join(', ')}`;
+    for(let opt of regRoleSelect.options){
+      if(opt.value === '') continue;
+      opt.disabled = !canCreateRoles.includes(opt.value);
+    }
+    regRoleSelect.value = '';
+  }
+
+  // Tombol Info User
+  document.getElementById('userInfoBtn').addEventListener('click', ()=>{
+    alert(getUserInfoText(currentUserData));
+  });
+
+  // Login button listener
+  document.getElementById('loginBtn').addEventListener('click', login);
+
+  // Logout button listener
+  document.getElementById('logoutBtn').addEventListener('click', logout);
+
+  // Register button listener
+  document.getElementById('registerBtn').addEventListener('click', registerAccount);
+
+  // Menu tab buttons
+  document.getElementById('btn-bug').addEventListener('click', ()=>showToolsSection('bug'));
+  document.getElementById('btn-create').addEventListener('click', ()=>showToolsSection('create'));
+
+  // Link buat akun baru di login page (ingat: harus login dulu untuk buat akun baru)
+  document.getElementById('link-create-account').addEventListener('click', ()=>{
+    alert('Login dulu untuk membuat akun, atau minta akun ke Developer/Admin.');
+  });
+
+  // Fungsi kirim bug
+  function doAction(name){
+    const target = document.getElementById('targetNumber').value.trim();
+    if(!target){
+      alert('Masukkan nomor target dulu!');
+      return;
+    }
+    alert(`"${name}" SUCCESS SENDING BUG KE: ${target}`);
+  }
+
+  // On load tampilkan login page
+  showLoginPage();
+
+</script>
+
+</body>
+</html>
